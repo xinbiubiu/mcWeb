@@ -48,25 +48,29 @@ function dataRefresh (usercachePath, statsPath) {
             let uuid = data['uuid'];
             let uuidPath = path.join(PLAYERS_PATH, uuid);
             let uuidSourcePath = path.join(statsPath, uuid + '.json');
-            if(!fs.existsSync(uuidPath)) {
-                fs.mkdirSync(uuidPath);
-            }
-            let rs = fs.createReadStream(uuidSourcePath);
-            if (!rs) throw 'uuidSourcePath路径有误或与uuid相对应的统计信息文件不存在';
+            
 
-            let myParser = JSONStream.parse('stats.minecraft:mined');
-            rs.pipe(myParser);
-            myParser.on('data', function (data) {
-                //取minecraft:mined内容写入文件
-                let ws = fs.createWriteStream(path.join(uuidPath, uuid + '.json'));
-                ws.write(JSON.stringify(data), function (err) {
-                    if(err) {
-                        console.error(err);
-                    } else {
-                        console.log(name + '数据导入成功\n');
-                    }
+            if (fs.existsSync(uuidSourcePath)) {
+                let rs = fs.createReadStream(uuidSourcePath);
+                if(!fs.existsSync(uuidPath)) {
+                    fs.mkdirSync(uuidPath);
+                }
+                let myParser = JSONStream.parse('stats.minecraft:mined');
+                rs.pipe(myParser);
+                myParser.on('data', function (data) {
+                    //取minecraft:mined内容写入文件
+                    let ws = fs.createWriteStream(path.join(uuidPath, uuid + '.json'));
+                    ws.write(JSON.stringify(data), function (err) {
+                        if(err) {
+                            console.error(err);
+                        } else {
+                            console.log(name + '数据导入成功\n');
+                        }
+                    });
                 });
-            })
-        })
-    })
+            } else {
+                console.error(`未找到玩家${name}的统计数据`);
+            }
+        });
+    });
 }
