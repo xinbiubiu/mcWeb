@@ -1,0 +1,6 @@
+
+# usercache.json的绝对路径，一般为MC服务器的根目录
+usercachePath: "D:/1.18.1testserver/usercache.json"
+
+# stats文件夹的绝对路径，一般在主世界存档文件夹下
+statsDirPath: "D:/1.18.1testserver/world/stats/"
